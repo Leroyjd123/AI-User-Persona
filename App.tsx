@@ -23,6 +23,7 @@ import {
   Bug,
   HelpCircle,
   X as XIcon,
+  Home,
 } from 'lucide-react';
 
 // Example scenarios for Randomizer
