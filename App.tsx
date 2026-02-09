@@ -34,14 +34,14 @@ const RANDOM_SCENARIOS = [
     demographic: "Urban millennials living in apartments"
   },
   {
-    productName: "AI Code Reviewer for Juniors",
-    problem: "Senior engineers spend too much time reviewing basic pull requests.",
-    demographic: "Tech leads in startups"
-  },
-  {
     productName: "Sustainable Sneaker Marketplace",
     problem: "Hard to verify if 'eco-friendly' fashion is actually sustainable.",
     demographic: "Gen Z eco-conscious shoppers"
+  },
+  {
+    productName: "AI Code Reviewer for Juniors",
+    problem: "Senior engineers spend too much time reviewing basic pull requests.",
+    demographic: "Tech leads in startups"
   },
   {
     productName: "Freelance Tax Assistant",
@@ -52,6 +52,91 @@ const RANDOM_SCENARIOS = [
     productName: "Remote Team Bonding App",
     problem: "Distributed teams feel disconnected and lonely.",
     demographic: "HR managers at remote-first companies"
+  },
+  {
+    productName: "Local Neighborhood Tool Sharing",
+    problem: "Expensive tools (drills, ladders) sit idle 99% of the time.",
+    demographic: "First-time homeowners in suburbs"
+  },
+  {
+    productName: "Language Learning through Cooking",
+    problem: "Flashcards are boring; people want functional, immersive learning.",
+    demographic: "Expats living in a new country"
+  },
+  {
+    productName: "Virtual Gym for Seniors",
+    problem: "Traditional gyms are intimidating and physically inaccessible for some.",
+    demographic: "Retirees looking for low-impact social fitness"
+  },
+  {
+    productName: "Micromobility Security Lock",
+    problem: "High theft rates prevent people from commuting via e-bikes.",
+    demographic: "Daily city commuters"
+  },
+  {
+    productName: "Mental Health Support for Founders",
+    problem: "High pressure and isolation lead to burnout in early-stage startups.",
+    demographic: "Tech startup founders"
+  },
+  {
+    productName: "Personalized Vitamin Subscription",
+    problem: "Generic supplements don't account for individual physiological needs.",
+    demographic: "Health-focused biohackers"
+  },
+  {
+    productName: "Smart Closet Organizer",
+    problem: "People wear 20% of their clothes 80% of the time, wasting space.",
+    demographic: "Minimalists & fashion enthusiasts"
+  },
+  {
+    productName: "Ethical Coffee Subscription",
+    problem: "Lack of transparency in fair-trade pricing and farmer welfare.",
+    demographic: "Coffee aficionados who care about origin"
+  },
+  {
+    productName: "Parenting Support Network",
+    problem: "Modern parenting is isolating without a 'village' nearby.",
+    demographic: "First-time parents in major cities"
+  },
+  {
+    productName: "Freelance Tax Automation",
+    problem: "Taxes are confusing and stressful for solo creators.",
+    demographic: "Full-time content creators & influencers"
+  },
+  {
+    productName: "Accessible Travel Planner",
+    problem: "Difficult to find verified wheelchair-accessible hotels and routes.",
+    demographic: "Travelers with mobility impairments"
+  },
+  {
+    productName: "Community Composting App",
+    problem: "Urban dwellers want to compost but lack space/infrastructure.",
+    demographic: "Apartment renters in eco-cities"
+  },
+  {
+    productName: "Elderly Companion Robots",
+    problem: "Loneliness and lack of basic safety monitoring for aging populations.",
+    demographic: "Family members of elderly living alone"
+  },
+  {
+    productName: "Sustainable Packaging for E-commerce",
+    problem: "Massive plastic waste from online shipping boxes.",
+    demographic: "Small business owners looking to go green"
+  },
+  {
+    productName: "Skill-Swap Marketplace",
+    problem: "Bartering is efficient but hard to find matches manually.",
+    demographic: "Lifelong learners and makers"
+  },
+  {
+    productName: "AI Legal Contract Reviewer",
+    problem: "Paying lawyers for basic contract reviews is too expensive for SMEs.",
+    demographic: "Small business owners & consultants"
+  },
+  {
+    productName: "Smart Grocery Inventory",
+    problem: "Food waste due to forgetting what's in the fridge.",
+    demographic: "Busy families looking to save money"
   }
 ];
 
@@ -314,7 +399,10 @@ function App() {
   }, []);
 
   const handleGenerate = async () => {
-    if (!inputs.productName || !inputs.problem) return;
+    if (!inputs.productName.trim() || !inputs.problem.trim()) {
+      showToast("Please provide both a Product Name and a Problem to solve.");
+      return;
+    }
     if (!confirmDiscardChanges()) return;
 
     if (authMode === 'free' && usage.personasGenerated >= 5) {

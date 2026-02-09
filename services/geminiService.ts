@@ -15,28 +15,34 @@ const getAiClient = (customKey?: string) => {
 const parseApiError = (err: any): string => {
   console.error("Original API Error:", err);
 
-  if (err.message?.includes("API key not valid")) {
-    return "Invalid API Key. Please check your key and try again.";
-  }
+  let message = err.message || "";
 
-  if (err.message?.includes("quota") || err.status === "RESOURCE_EXHAUSTED") {
-    return "API Quota Exceeded. Please try again later or check your billing status.";
-  }
-
-  if (err.message && typeof err.message === 'string') {
+  // Try to extract nested JSON error message
+  if (typeof message === 'string' && (message.includes('{') || message.includes('}'))) {
     try {
-      // Check if it's a JSON string error from the SDK
-      if (err.message.startsWith('{')) {
-        const parsed = JSON.parse(err.message);
-        return parsed.error?.message || parsed.message || "An error occurred with the AI service.";
+      // Find the first '{' and last '}' to extract potential JSON
+      const start = message.indexOf('{');
+      const end = message.lastIndexOf('}');
+      if (start !== -1 && end !== -1) {
+        const jsonStr = message.substring(start, end + 1);
+        const parsed = JSON.parse(jsonStr);
+        // Handle common Google API error formats
+        message = parsed.error?.message || parsed.message || message;
       }
-      return err.message;
-    } catch {
-      return err.message;
+    } catch (e) {
+      console.warn("Failed to parse nested error JSON", e);
     }
   }
 
-  return "An unexpected error occurred. Please try again.";
+  if (message.includes("API key not valid") || message.includes("API_KEY_INVALID")) {
+    return "Invalid API Key. Please check your key and try again.";
+  }
+
+  if (message.includes("quota") || message.includes("RESOURCE_EXHAUSTED")) {
+    return "API Quota Exceeded. Please try again later or check your billing status.";
+  }
+
+  return typeof message === 'string' ? message : "An unexpected error occurred. Please try again.";
 };
 
 // 1. Generate Persona (Text & Avatar Config)
