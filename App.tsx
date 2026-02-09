@@ -126,6 +126,56 @@ interface UsageStats {
   chatCounts: { [personaId: string]: number };
 }
 
+// Utility
+const showToast = (msg: string) => {
+  const toast = document.createElement('div');
+  toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 bg-slate-800 text-white text-sm font-bold rounded-full shadow-2xl animate-in slide-in-from-bottom-4 duration-300';
+  toast.innerText = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.className += ' opacity-0 transition-opacity duration-500';
+    setTimeout(() => document.body.removeChild(toast), 500);
+  }, 3000);
+};
+
+// Error Boundary
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: any, errorInfo: any) {
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="fixed inset-0 flex flex-col items-center justify-center p-6 bg-slate-50 text-center">
+          <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-6">
+            <Bug className="w-8 h-8" />
+          </div>
+          <h1 className="text-2xl font-bold text-slate-800 mb-2">Something went wrong</h1>
+          <p className="text-slate-600 mb-8 max-w-md">The application encountered an unexpected error. Please try refreshing the page.</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-8 py-3 bg-indigo-600 text-white font-bold rounded-xl shadow-lg hover:bg-indigo-700 transition-all"
+          >
+            Refresh Platform
+          </button>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 function App() {
   const [persona, setPersona] = useState<Persona | null>(null);
   const [loading, setLoading] = useState(false);
@@ -296,7 +346,7 @@ function App() {
       window.history.replaceState({}, '', window.location.pathname);
     } catch (err: any) {
       console.error(err);
-      alert(`Error: ${err.message || 'Failed to generate persona'}`);
+      showToast(err.message || 'Failed to generate persona');
     } finally {
       setLoading(false);
     }
@@ -380,8 +430,11 @@ function App() {
         timestamp: new Date()
       };
       setChatMessages(prev => [...prev, botMsg]);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
+      showToast(e.message || "Failed to get a response. Please check your connection.");
+      // Remove the last user message if it failed to get a response? 
+      // Or just leave it and show it failed.
     } finally {
       setIsTyping(false);
     }
