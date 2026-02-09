@@ -1,0 +1,7 @@
+{
+  "name": "PersonaFlow",
+  "description": "Generate realistic user personas with AI and interview them in real-time to validate product assumptions.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
